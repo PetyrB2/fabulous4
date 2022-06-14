@@ -1,5 +1,6 @@
 "use strict";
 console.log("hellos");
+
 //dom
 const startButton = document.getElementById("start");
 const restartButton = document.getElementById("restart");
@@ -26,6 +27,9 @@ let hand = [];
 
 function start() {
   gameStarted = true;
+  let node = document.createElement("li");
+  node.innerHTML = `GAME STARTED`;
+  document.querySelector("ol").append(node);
 }
 
 function restart() {
@@ -41,49 +45,61 @@ function randomCard() {
 }
 
 function draw() {
-  randomCard();
-  hand.push(selectedNumber);
-  handCount = handCount + selectedNumber;
+  if (
+    gameStarted == true &&
+    blackJack == false &&
+    bust == false &&
+    fold == false
+  ) {
+    randomCard();
+    hand.push(selectedNumber);
+    handCount = handCount + selectedNumber;
+    console.log("drawing");
+  }
 }
 
 function folded() {
-  if (gameStarted == true && blackJack == false && bust == false) {
+  if (gameStarted === true && blackJack === false && bust === false) {
     fold = true;
-
-    if (handCount <= 20) {
-      let remainder = 21 - handCount;
-    }
+    let node = document.createElement("li");
+    node.innerHTML = `You folded, you were ${
+      21 - handCount
+    } away from Blackjack`;
+    document.querySelector("ol").append(node);
   }
 }
 
 function winCondition() {
-  if (blackJack == false && fold == false && bust == false) {
+  if (blackJack === false && fold === false && bust === false) {
     if (handCount == 21) {
       blackJack = true;
+      let node = document.createElement("li");
+      node.innerHTML = `NICE YOU WIN`;
+      document.querySelector("ol").append(node);
     } else if (handCount > 21) {
       bust = true;
+      let node = document.createElement("li");
+      node.innerHTML = `GAME OVER YOU LOSE`;
+      document.querySelector("ol").append(node);
     } else {
-      console.log("Dare to continue?");
+      let node = document.createElement("li");
+      node.innerHTML = `Dare to draw?`;
+      document.querySelector("ol").append(node);
     }
   }
 }
 
 function addToList() {
-  let node = document.createElement("li");
-  node.appendChild(document.createTextNode(`Cards in hand: ${hand}`));
-  node.appendChild(document.createTextNode(`Sum: ${handCount}`));
-
-  document.querySelector("ol").appendChild(node);
+  if (bust === false && fold === false) {
+    let node = document.createElement("li");
+    node.innerHTML = `Cards in hand: ${hand}` + "<br>" + `Sum: ${handCount}`;
+    document.querySelector("ol").append(node);
+  }
 }
 
-// function drawAndAdd(){
-//     let a = draw();
-//     let b = addToList();
-//    return a&&b
-// }
-
-startButton.onClick = () => start();
-restartButton.onClick = () => restart();
-drawButton.onClick = () => draw();
-addToList();
-foldButton.onClick = () => fold();
+startButton.addEventListener("click", start);
+restartButton.addEventListener("click", restart);
+drawButton.addEventListener("click", draw);
+drawButton.addEventListener("click", addToList);
+drawButton.addEventListener("click", winCondition);
+foldButton.addEventListener("click", folded);
